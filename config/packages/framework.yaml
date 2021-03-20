@@ -11,6 +11,7 @@ framework:
         cookie_secure: auto
         cookie_samesite: lax
 
+    property_info: ~
     #esi: true
     #fragments: true
     php_errors:
