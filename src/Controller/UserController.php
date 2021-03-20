@@ -31,7 +31,7 @@ class UserController extends AbstractController
         CustomSerializer $serializer
     ): Response {
         $users = $usersRepository->findAll();
-        $this->denyAccessUnlessGranted(UserVoter::VIEW_LIST, $users[0]);
+        $this->denyAccessUnlessGranted(UserVoter::VIEW_LIST, $users[0] ?? null);
 
         return new JsonResponse(
             $serializer->serializer->serialize($users, 'json', ['groups' => 'user']),

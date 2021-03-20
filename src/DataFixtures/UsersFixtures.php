@@ -33,6 +33,8 @@ class UsersFixtures extends Fixture
             $user->setPassword($password);
 
             $manager->persist($user);
+            $this->addReference(sprintf('user_%s', $i), $user);
+
         }
 
         $manager->flush();

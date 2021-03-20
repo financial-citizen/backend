@@ -35,7 +35,7 @@ class UserVoter extends BaseVoter
     protected function supports(string $attribute, $subject): bool
     {
         return in_array($attribute, self::SUPPORTED_ATTRIBUTES)
-            && $subject instanceof Users;
+            && ($subject instanceof Users || $subject == null);
     }
 
     /**

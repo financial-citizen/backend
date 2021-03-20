@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UsersRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JetBrains\PhpStorm\Pure;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -73,6 +76,13 @@ class Users implements UserInterface
     private ?DateTime $birthday = null;
 
     /**
+     * @var Collection|Suggestion[]
+     * @ORM\OneToMany(targetEntity="App\Entity\Suggestion", mappedBy="user", orphanRemoval=true, cascade={"PERSIST"})
+     * @Groups("suggestionRel")
+     */
+    private Collection $suggestions;
+
+    /**
      * @ORM\Column(type="json")
      * @var string[]
      * @Groups("currentUser")
@@ -85,6 +95,11 @@ class Users implements UserInterface
      * @Assert\NotBlank(groups={"register"})
      */
     private ?string $password = null;
+
+    #[Pure] public function __construct()
+    {
+        $this->suggestion = new ArrayCollection();
+    }
 
     public function getId(): ?string
     {
@@ -182,6 +197,24 @@ class Users implements UserInterface
     }
 
     /**
+     * @return Suggestion[]|Collection
+     */
+    public function getSuggestions(): ArrayCollection|Collection|array
+    {
+        return $this->suggestions;
+    }
+
+    /**
+     * @param Suggestion[]|Collection $suggestion
+     * @return Users
+     */
+    public function setSuggestions(ArrayCollection|Collection|array $suggestions): Users
+    {
+        $this->suggestions = $suggestions;
+        return $this;
+    }
+
+    /**
      * @return string[]
      * @see UserInterface
      */
@@ -189,7 +222,7 @@ class Users implements UserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_CITIZEN';
 
         return array_unique($roles);
     }
