@@ -8,10 +8,10 @@ FROM php:8.0-apache
 RUN apt-get update && apt-get install -y \
     acl \
  && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-install pdo
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 WORKDIR /var/www/project
 
-ENV APP_ENV=prod
+ENV APP_ENV=dev
 ENV HTTPDUSER='www-data'
 
 EXPOSE 8080
@@ -32,5 +32,10 @@ USER www-data
 
 RUN php bin/console cache:clear --no-warmup && \
     php bin/console cache:warmup
+
+RUN php bin/console doctrine:schema:drop --force
+RUN php bin/console doctrine:schema:create
+RUN php bin/console doctrine:fixtures:load --append
+RUN php bin/console lexik:jwt:generate-keypair --skip-if-exists
 
 CMD ["apache2-foreground"]
