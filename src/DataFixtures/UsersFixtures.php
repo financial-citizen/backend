@@ -31,6 +31,7 @@ class UsersFixtures extends Fixture
             $user->setBirthday($this->faker->dateTimeBetween('- 90 years', '- 20 years'));
             $password = $this->encoder->encodePassword($user, 'password123');
             $user->setPassword($password);
+            $user->setRoles($this->faker->randomElement(['ROLE_CITIZEN', 'ROLE_GOVERNMENT']));
 
             $manager->persist($user);
             $this->addReference(sprintf('user_%s', $i), $user);

@@ -71,6 +71,7 @@ class UserController extends AbstractController
         $user->setAhv($content['ahv']);
         $user->setBirthday($birthday);
         $user->setPassword($content['password']);
+        $user->setRoles($content['roles']);
 //        $user->birthday($birthday);
 //        $user->birthday($birthday);
 //        $user = $serializer->deserialize($request->getContent(), Users::class, 'json');

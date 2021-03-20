@@ -83,11 +83,12 @@ class Users implements UserInterface
     private Collection $suggestions;
 
     /**
-     * @ORM\Column(type="json")
-     * @var string[]
-     * @Groups("currentUser")
+     * @ORM\Column(type="string")
+     * @Groups("user")
+     * @Assert\NotBlank(groups={"register", "edit"}))
+     * @Assert\Choice({"ROLE_CITIZEN", "ROLE_GOVERNMENT"}, groups={"register", "edit"}))
      */
-    private array $roles = [];
+    private string $roles = 'ROLE_CITIZEN';
 
     /**
      * @var string The hashed password
@@ -220,15 +221,10 @@ class Users implements UserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_CITIZEN';
-
-        return array_unique($roles);
+        return array_unique([$this->roles]);
     }
 
-    /** @param string[] $roles */
-    public function setRoles(array $roles): self
+    public function setRoles(string $roles): self
     {
         $this->roles = $roles;
 
