@@ -42,8 +42,9 @@ class UserController extends AbstractController
     }
 
     #[Route('/me', methods: ['GET'])]
-    public function currentUser(CustomSerializer $serializer): JsonResponse
-    {
+    public function currentUser(
+        CustomSerializer $serializer
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(UserVoter::VIEW_ME, $this->getUser());
 
         return new JsonResponse(
@@ -61,9 +62,9 @@ class UserController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         UserPasswordEncoderInterface $passwordEncoder
-    ):JsonResponse {
+    ): JsonResponse {
         $content = json_decode($request->getContent(), true);
-        $birthday = DateTime::createFromFormat ('Y-m-d H:i:s', $content['birthday']);
+        $birthday = DateTime::createFromFormat('Y-m-d H:i:s', $content['birthday']);
         $user = new Users();
         $user->setEmail($content['email']);
         $user->setName($content['name']);
@@ -96,7 +97,8 @@ class UserController extends AbstractController
             Response::HTTP_CREATED,
             [],
             true,
-        );    }
+        );
+    }
 
     /** @Route("/{id}/change_password", methods={"PUT"}) */
     public function changePassword(
@@ -184,10 +186,8 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(
-            $serializer->serializer->serialize($user, 'json', ['groups' => $groups]),
-            Response::HTTP_OK,
             [],
-            true,
+            Response::HTTP_NO_CONTENT
         );
     }
 }

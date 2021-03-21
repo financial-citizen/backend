@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -64,6 +66,21 @@ class Suggestion
      * @Groups("user")
      */
     private ?Users $user = null;
+
+    /**
+     * @var Collection|Vote[]
+     * @ORM\OneToMany(targetEntity="App\Entity\Vote", mappedBy="suggestion", orphanRemoval=true, cascade={"PERSIST"})
+     * @Groups("vote")
+     */
+    private Collection $votes;
+
+    /**
+     * Suggestion constructor.
+     */
+    public function __construct()
+    {
+        $this->votes = new ArrayCollection();
+    }
 
     public function getId(): ?string
     {
@@ -176,5 +193,43 @@ class Suggestion
     {
         $this->user = $user;
         return $this;
+    }
+
+    /**
+     * @return Vote[]|Collection
+     */
+    public function getVotes(): Collection|array
+    {
+        return $this->votes;
+    }
+
+    /**
+     * @param Vote[]|Collection $votes
+     * @return Suggestion
+     */
+    public function setVotes(Collection|array $votes): Suggestion
+    {
+        $this->votes = $votes;
+        return $this;
+    }
+
+    /**
+     * @Groups("suggestion")
+     */
+    public function getVotesUp(): int
+    {
+        return $this->votes->filter(function (Vote $vote):bool {
+            return $vote->isVoteValue();
+        })->count();
+    }
+
+    /**
+     * @Groups("suggestion")
+     */
+    public function getVotesDown(): int
+    {
+        return $this->votes->filter(function (Vote $vote):bool {
+            return !$vote->isVoteValue();
+        })->count();
     }
 }

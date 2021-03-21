@@ -83,6 +83,13 @@ class Users implements UserInterface
     private Collection $suggestions;
 
     /**
+     * @var Collection|Vote[]
+     * @ORM\OneToMany(targetEntity="App\Entity\Vote", mappedBy="user", orphanRemoval=true, cascade={"PERSIST"})
+     * @Groups("vote")
+     */
+    private Collection $votes;
+
+    /**
      * @ORM\Column(type="string")
      * @Groups("user")
      * @Assert\NotBlank(groups={"register", "edit"}))
@@ -99,7 +106,8 @@ class Users implements UserInterface
 
     #[Pure] public function __construct()
     {
-        $this->suggestion = new ArrayCollection();
+        $this->suggestions = new ArrayCollection();
+        $this->votes = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -212,6 +220,24 @@ class Users implements UserInterface
     public function setSuggestions(ArrayCollection|Collection|array $suggestions): Users
     {
         $this->suggestions = $suggestions;
+        return $this;
+    }
+
+    /**
+     * @return Vote[]|Collection
+     */
+    public function getVotes(): ArrayCollection|Collection|array
+    {
+        return $this->votes;
+    }
+
+    /**
+     * @param Vote[]|Collection $votes
+     * @return Users
+     */
+    public function setVotes(ArrayCollection|Collection|array $votes): Users
+    {
+        $this->votes = $votes;
         return $this;
     }
 

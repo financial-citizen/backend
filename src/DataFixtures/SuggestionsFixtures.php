@@ -30,6 +30,8 @@ class SuggestionsFixtures extends Fixture implements DependentFixtureInterface
             $suggestion->setUser($this->getReference(sprintf('user_%s', $this->faker->numberBetween(1, 19))));
 
             $manager->persist($suggestion);
+            $this->addReference(sprintf('suggestion_%s', $i), $suggestion);
+
         }
 
         $manager->flush();
